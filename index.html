@@ -261,144 +261,137 @@
         </div>
     </div>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAQkm_4QlIeUZLpfKpMezx0Rj_B0F5cCxM",
+    authDomain: "tw-address-form.firebaseapp.com",
+    projectId: "tw-address-form",
+    storageBucket: "tw-address-form.firebasestorage.app",
+    messagingSenderId: "814898181772",
+    appId: "1:814898181772:web:0adc26dccea07cac222da9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
   let addressData = {};
 
-  window.onload = () => {
-    // DOM 元素
-    const citySelect = document.getElementById('city');
-    const districtSelect = document.getElementById('district');
-    const roadSelect = document.getElementById('road');
-    const laneInput = document.getElementById('lane');
-    const longInput = document.getElementById('long');
-    const alleyInput = document.getElementById('alley');
-    const haoInput = document.getElementById('hao');
-    const floorInput = document.getElementById('floor');
-    const roomInput = document.getElementById('room');
-    const fullAddressDiv = document.getElementById('fullAddress');
+  const citySelect = document.getElementById('city');
+  const districtSelect = document.getElementById('district');
+  const roadSelect = document.getElementById('road');
+  const laneInput = document.getElementById('lane');
+  const longInput = document.getElementById('long');
+  const alleyInput = document.getElementById('alley');
+  const haoInput = document.getElementById('hao');
+  const floorInput = document.getElementById('floor');
+  const roomInput = document.getElementById('room');
+  const fullAddressDiv = document.getElementById('fullAddress');
 
-    // 初始化資料
-    fetch("https://script.google.com/macros/s/AKfycbxPnaFj5m4oeZIUd_3wos6kL5mrdmLFCs24wWXtOh8ASbUBrJ91g7y1uX8zr4m9vII/exec")
-      .then(res => res.json())
-      .then(data => {
-        buildAddressData(data);
-        initCities();
-      })
-      .catch(err => {
-        console.error("載入地址資料失敗：", err);
-        alert("無法載入 Google Sheets 地址資料，請稍後再試。");
-      });
-
-    function buildAddressData(data) {
-      data.forEach(row => {
-        const city = row["縣市"];
-        const district = row["行政區"];
-        const road = row["路名"];
-
-        if (!addressData[city]) addressData[city] = {};
-        if (!addressData[city][district]) addressData[city][district] = [];
-        if (!addressData[city][district].includes(road)) {
-          addressData[city][district].push(road);
-        }
-      });
+  const snapshot = await getDocs(collection(db, "addresses"));
+  snapshot.forEach(doc => {
+    const { city, district, road } = doc.data();
+    if (!addressData[city]) addressData[city] = {};
+    if (!addressData[city][district]) addressData[city][district] = [];
+    if (!addressData[city][district].includes(road)) {
+      addressData[city][district].push(road);
     }
+  });
 
-    function initCities() {
-      Object.keys(addressData).forEach(city => {
+  citySelect.innerHTML = '<option value="">請選擇縣市</option>';
+  Object.keys(addressData).forEach(city => {
+    const option = document.createElement('option');
+    option.value = city;
+    option.textContent = city;
+    citySelect.appendChild(option);
+  });
+  citySelect.disabled = false;
+
+  function updateDistricts() {
+    districtSelect.innerHTML = '<option value="">請選擇鄉鎮市區</option>';
+    roadSelect.innerHTML = '<option value="">請先選擇鄉鎮市區</option>';
+    const selectedCity = citySelect.value;
+    if (selectedCity) {
+      districtSelect.disabled = false;
+      districtSelect.classList.remove('disabled');
+      Object.keys(addressData[selectedCity]).forEach(district => {
         const option = document.createElement('option');
-        option.value = city;
-        option.textContent = city;
-        citySelect.appendChild(option);
+        option.value = district;
+        option.textContent = district;
+        districtSelect.appendChild(option);
       });
+    } else {
+      districtSelect.disabled = true;
+      districtSelect.classList.add('disabled');
+      roadSelect.disabled = true;
+      roadSelect.classList.add('disabled');
+    }
+    updateFullAddress();
+  }
+
+  function updateRoads() {
+    roadSelect.innerHTML = '<option value="">請選擇道路</option>';
+    const selectedCity = citySelect.value;
+    const selectedDistrict = districtSelect.value;
+    if (selectedCity && selectedDistrict) {
+      roadSelect.disabled = false;
+      roadSelect.classList.remove('disabled');
+      addressData[selectedCity][selectedDistrict].forEach(road => {
+        const option = document.createElement('option');
+        option.value = road;
+        option.textContent = road;
+        roadSelect.appendChild(option);
+      });
+    } else {
+      roadSelect.disabled = true;
+      roadSelect.classList.add('disabled');
+    }
+    updateFullAddress();
+  }
+
+  function updateFullAddress() {
+    const city = citySelect.value;
+    const district = districtSelect.value;
+    const road = roadSelect.value;
+    const lane = laneInput.value;
+    const long = longInput.value;
+    const alley = alleyInput.value;
+    const hao = haoInput.value;
+    const floor = floorInput.value;
+    const room = roomInput.value;
+
+    if (!city || !district || !road || !hao) {
+      fullAddressDiv.textContent = '請填寫上方資訊以產生完整地址';
+      return;
     }
 
-    function updateDistricts() {
-      districtSelect.innerHTML = '<option value="">請選擇鄉鎮市區</option>';
-      roadSelect.innerHTML = '<option value="">請先選擇鄉鎮市區</option>';
+    let address = city + district + road;
+    if (lane) address += lane + '巷';
+    if (long) address += long + '弄';
+    if (alley) address += alley + '衖';
+    address += hao + '號';
+    if (floor) address += floor + '樓';
+    if (room) address += room + '室';
 
-      const selectedCity = citySelect.value;
-      if (selectedCity) {
-        districtSelect.disabled = false;
-        districtSelect.classList.remove('disabled');
+    fullAddressDiv.textContent = address;
+  }
 
-        Object.keys(addressData[selectedCity]).forEach(district => {
-          const option = document.createElement('option');
-          option.value = district;
-          option.textContent = district;
-          districtSelect.appendChild(option);
-        });
-      } else {
-        districtSelect.disabled = true;
-        districtSelect.classList.add('disabled');
-        roadSelect.disabled = true;
-        roadSelect.classList.add('disabled');
-      }
-      updateFullAddress();
-    }
-
-    function updateRoads() {
-      roadSelect.innerHTML = '<option value="">請選擇道路</option>';
-
-      const selectedCity = citySelect.value;
-      const selectedDistrict = districtSelect.value;
-
-      if (selectedCity && selectedDistrict) {
-        roadSelect.disabled = false;
-        roadSelect.classList.remove('disabled');
-
-        addressData[selectedCity][selectedDistrict].forEach(road => {
-          const option = document.createElement('option');
-          option.value = road;
-          option.textContent = road;
-          roadSelect.appendChild(option);
-        });
-      } else {
-        roadSelect.disabled = true;
-        roadSelect.classList.add('disabled');
-      }
-      updateFullAddress();
-    }
-
-    function updateFullAddress() {
-      const city = citySelect.value;
-      const district = districtSelect.value;
-      const road = roadSelect.value;
-      const lane = laneInput.value;
-      const long = longInput.value;
-      const alley = alleyInput.value;
-      const hao = haoInput.value;
-      const floor = floorInput.value;
-      const room = roomInput.value;
-
-      if (!city || !district || !road || !hao) {
-        fullAddressDiv.textContent = '請填寫上方資訊以產生完整地址';
-        return;
-      }
-
-      let address = city + district + road;
-
-      if (lane) address += lane + '巷';
-      if (long) address += long + '弄';
-      if (alley) address += alley + '衖';
-      address += hao + '號';
-      if (floor) address += floor + '樓';
-      if (room) address += room + '室';
-
-      fullAddressDiv.textContent = address;
-    }
-
-    // 綁定事件
-    citySelect.addEventListener('change', updateDistricts);
-    districtSelect.addEventListener('change', updateRoads);
-    roadSelect.addEventListener('change', updateFullAddress);
-    laneInput.addEventListener('input', updateFullAddress);
-    longInput.addEventListener('input', updateFullAddress);
-    alleyInput.addEventListener('input', updateFullAddress);
-    haoInput.addEventListener('input', updateFullAddress);
-    floorInput.addEventListener('input', updateFullAddress);
-    roomInput.addEventListener('input', updateFullAddress);
-  };
+  citySelect.addEventListener('change', updateDistricts);
+  districtSelect.addEventListener('change', updateRoads);
+  roadSelect.addEventListener('change', updateFullAddress);
+  laneInput.addEventListener('input', updateFullAddress);
+  longInput.addEventListener('input', updateFullAddress);
+  alleyInput.addEventListener('input', updateFullAddress);
+  haoInput.addEventListener('input', updateFullAddress);
+  floorInput.addEventListener('input', updateFullAddress);
+  roomInput.addEventListener('input', updateFullAddress);
 </script>
+</body>
+</html>
 
 </body>
 </html>
+
+
