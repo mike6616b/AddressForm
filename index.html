@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>地址</title>
+    <title>地址填寫表單</title>
     <style>
         body {
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
@@ -51,6 +51,28 @@
             appearance: none;
         }
         
+        input::placeholder {
+            color: #bbb;
+        }
+        
+        .input-with-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .input-with-label input {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .unit-label {
+            color: #666;
+            font-size: 14px;
+            white-space: nowrap;
+            font-weight: normal;
+        }
+        
         select:focus, input:focus {
             border-color: #4CAF50;
             outline: none;
@@ -59,8 +81,8 @@
         .road-group {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            align-items: end;
+            gap: 8px;
+            align-items: center;
         }
         
         /* 手機版調整 */
@@ -86,13 +108,21 @@
             }
             
             .road-group {
-                grid-template-columns: 1fr;
-                gap: 8px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
             }
             
             select, input {
-                padding: 14px;
+                padding: 12px 8px;
                 font-size: 16px;
+            }
+            
+            .input-with-label input {
+                padding: 12px 6px;
+            }
+            
+            .unit-label {
+                font-size: 13px;
             }
             
             .help-text {
@@ -111,13 +141,15 @@
         @media (min-width: 481px) and (max-width: 768px) {
             .road-group {
                 grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
             }
         }
         
         /* 桌面版 */
         @media (min-width: 769px) {
             .road-group {
-                grid-template-columns: 80px 80px 80px 1fr 80px 80px;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 10px;
             }
             
             body {
@@ -194,29 +226,29 @@
         <div class="form-group">
             <label>詳細地址資訊</label>
             <div class="road-group">
-                <div>
+                <div class="input-with-label">
                     <input type="number" id="lane" placeholder="巷" min="1">
-                    <div class="help-text">巷</div>
+                    <span class="unit-label">巷</span>
                 </div>
-                <div>
+                <div class="input-with-label">
                     <input type="number" id="long" placeholder="弄" min="1">
-                    <div class="help-text">弄</div>
+                    <span class="unit-label">弄</span>
                 </div>
-                <div>
+                <div class="input-with-label">
                     <input type="number" id="alley" placeholder="衖" min="1">
-                    <div class="help-text">衖</div>
+                    <span class="unit-label">衖</span>
                 </div>
-                <div>
+                <div class="input-with-label">
                     <input type="number" id="hao" placeholder="號 *" min="1" required>
-                    <div class="help-text">號碼 (必填)</div>
+                    <span class="unit-label">號</span>
                 </div>
-                <div>
+                <div class="input-with-label">
                     <input type="number" id="floor" placeholder="樓" min="1">
-                    <div class="help-text">樓</div>
+                    <span class="unit-label">樓</span>
                 </div>
-                <div>
+                <div class="input-with-label">
                     <input type="number" id="room" placeholder="室" min="1">
-                    <div class="help-text">室</div>
+                    <span class="unit-label">室</span>
                 </div>
             </div>
         </div>
@@ -224,7 +256,7 @@
         <div class="form-group">
             <label>完整地址</label>
             <div class="address-display" id="fullAddress">
-                
+                請填寫上方資訊以產生完整地址
             </div>
         </div>
     </div>
