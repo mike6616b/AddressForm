@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣地址填寫表單</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        select:focus, input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        
+        .road-group {
+            display: grid;
+            grid-template-columns: 80px 80px 80px 1fr 80px 80px;
+            gap: 10px;
+            align-items: end;
+        }
+        
+        .road-group input {
+            width: 100%;
+        }
+        
+        .address-display {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e8;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c5530;
+            min-height: 24px;
+        }
+        
+        .disabled {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .help-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>台灣地址填寫表單</h1>
+        
+        <div class="form-group">
+            <label for="city">請選擇縣市 <span class="required">*</span></label>
+            <select id="city" required>
+                <option value="">請選擇縣市</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="district">請選擇鄉鎮市區 <span class="required">*</span></label>
+            <select id="district" required disabled class="disabled">
+                <option value="">請先選擇縣市</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="road">道路或街名或里名稱 <span class="required">*</span></label>
+            <select id="road" required disabled class="disabled">
+                <option value="">請先選擇鄉鎮市區</option>
+            </select>
+            <div class="help-text">使用說明：根據所選縣市及行政區顯示可選道路</div>
+        </div>
+        
+        <div class="form-group">
+            <label>詳細地址資訊</label>
+            <div class="road-group">
+                <div>
+                    <input type="number" id="lane" placeholder="巷" min="1">
+                    <div class="help-text">巷</div>
+                </div>
+                <div>
+                    <input type="number" id="long" placeholder="弄" min="1">
+                    <div class="help-text">弄</div>
+                </div>
+                <div>
+                    <input type="number" id="alley" placeholder="衖" min="1">
+                    <div class="help-text">衖</div>
+                </div>
+                <div>
+                    <input type="number" id="hao" placeholder="號 *" min="1" required>
+                    <div class="help-text">號碼 (必填)</div>
+                </div>
+                <div>
+                    <input type="number" id="floor" placeholder="樓" min="1">
+                    <div class="help-text">樓</div>
+                </div>
+                <div>
+                    <input type="number" id="room" placeholder="室" min="1">
+                    <div class="help-text">室</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>完整地址</label>
+            <div class="address-display" id="fullAddress">
+                請填寫上方資訊以產生完整地址
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模擬台灣地址資料庫
+        const addressData = {
+            "台北市": {
+                "中正區": ["中山南路", "忠孝東路", "羅斯福路", "愛國東路", "信義路"],
+                "大同區": ["民生西路", "重慶北路", "承德路", "寧夏路", "迪化街"],
+                "中山區": ["中山北路", "民生東路", "松江路", "建國北路", "復興北路"],
+                "松山區": ["南京東路", "敦化北路", "光復北路", "民生東路", "八德路"],
+                "大安區": ["忠孝東路", "信義路", "和平東路", "敦化南路", "復興南路"],
+                "萬華區": ["萬大路", "西園路", "康定路", "廣州街", "環河南路"],
+                "信義區": ["信義路", "基隆路", "松仁路", "松高路", "莊敬路"],
+                "士林區": ["中山北路", "文林路", "大東路", "士商路", "承德路"],
+                "北投區": ["中央南路", "光明路", "大業路", "石牌路", "北投路"],
+                "內湖區": ["內湖路", "成功路", "民權東路", "瑞光路", "港墘路"],
+                "南港區": ["南港路", "研究院路", "興中路", "市民大道", "忠孝東路"],
+                "文山區": ["羅斯福路", "木柵路", "景美街", "興隆路", "辛亥路"]
+            },
+            "新北市": {
+                "板橋區": ["中山路", "文化路", "民族路", "府中路", "四川路"],
+                "三重區": ["重新路", "三和路", "中正北路", "集美街", "重陽路"],
+                "中和區": ["中山路", "景平路", "中正路", "連城路", "興南路"],
+                "永和區": ["中山路", "永和路", "中正路", "福和路", "竹林路"],
+                "新莊區": ["中正路", "新泰路", "中華路", "思源路", "福壽街"],
+                "新店區": ["中正路", "北新路", "中興路", "安康路", "寶橋路"],
+                "樹林區": ["中正路", "中山路", "保安街", "樹新路", "博愛街"],
+                "鶯歌區": ["中正一路", "文化路", "國慶街", "鶯桃路", "中山路"],
+                "三峽區": ["民權街", "中正路", "復興路", "介壽路", "大德路"],
+                "淡水區": ["中正路", "民權路", "英專路", "學府路", "中山北路"]
+            },
+            "桃園市": {
+                "桃園區": ["中正路", "復興路", "民生路", "中山路", "三民路"],
+                "中壢區": ["中正路", "中山路", "元化路", "新明路", "民族路"],
+                "平鎮區": ["民族路", "中豐路", "環南路", "金陵路", "延平路"],
+                "八德區": ["介壽路", "桃鶯路", "和平路", "廣福路", "大湳路"],
+                "楊梅區": ["中山北路", "楊新路", "新農街", "富岡路", "梅獅路"],
+                "蘆竹區": ["南昌路", "中正路", "大竹路", "奉化路", "中山路"]
+            },
+            "台中市": {
+                "中區": ["中正路", "民族路", "台灣大道", "自由路", "光復路"],
+                "東區": ["復興路", "建成路", "樂業路", "十甲路", "東英路"],
+                "西區": ["台灣大道", "五權路", "公益路", "向上路", "美村路"],
+                "南區": ["復興路", "建國路", "五權南路", "工學路", "南門路"],
+                "北區": ["中清路", "健行路", "文心路", "三民路", "進化路"],
+                "西屯區": ["台灣大道", "河南路", "文心路", "朝馬路", "惠來路"],
+                "南屯區": ["文心路", "五權西路", "永春東路", "大墩路", "黎明路"],
+                "北屯區": ["北屯路", "崇德路", "文心路", "軍功路", "昌平路"]
+            },
+            "台南市": {
+                "中西區": ["中正路", "民生路", "成功路", "府前路", "開山路"],
+                "東區": ["東門路", "裕農路", "中華東路", "勝利路", "大學路"],
+                "南區": ["中華西路", "夏林路", "健康路", "新興路", "萬年路"],
+                "北區": ["公園路", "文賢路", "成功路", "小東路", "開元路"],
+                "安平區": ["平豐路", "建平路", "安平路", "慶平路", "華平路"],
+                "安南區": ["安中路", "海佃路", "長和路", "安和路", "安明路"]
+            },
+            "高雄市": {
+                "新興區": ["中山一路", "中正三路", "民生一路", "復興一路", "五福二路"],
+                "前金區": ["五福三路", "中正四路", "成功一路", "七賢二路", "大同二路"],
+                "苓雅區": ["中正一路", "四維三路", "三多三路", "成功一路", "民權一路"],
+                "鹽埕區": ["五福四路", "新樂街", "大勇路", "七賢三路", "中正四路"],
+                "鼓山區": ["美術東二路", "明誠二路", "青海路", "鼓山一路", "裕誠路"],
+                "三民區": ["民族一路", "九如一路", "大昌二路", "建國二路", "澄清路"],
+                "左營區": ["博愛二路", "左營大路", "華夏路", "重立路", "文川路"],
+                "楠梓區": ["楠梓路", "建楠路", "後昌路", "加昌路", "土庫路"]
+            }
+        };
+
+        // DOM 元素
+        const citySelect = document.getElementById('city');
+        const districtSelect = document.getElementById('district');
+        const roadSelect = document.getElementById('road');
+        const laneInput = document.getElementById('lane');
+        const longInput = document.getElementById('long');
+        const alleyInput = document.getElementById('alley');
+        const haoInput = document.getElementById('hao');
+        const floorInput = document.getElementById('floor');
+        const roomInput = document.getElementById('room');
+        const fullAddressDiv = document.getElementById('fullAddress');
+
+        // 初始化縣市選項
+        function initCities() {
+            Object.keys(addressData).forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+        }
+
+        // 更新行政區選項
+        function updateDistricts() {
+            districtSelect.innerHTML = '<option value="">請選擇鄉鎮市區</option>';
+            roadSelect.innerHTML = '<option value="">請先選擇鄉鎮市區</option>';
+            
+            const selectedCity = citySelect.value;
+            if (selectedCity) {
+                districtSelect.disabled = false;
+                districtSelect.classList.remove('disabled');
+                
+                Object.keys(addressData[selectedCity]).forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district;
+                    option.textContent = district;
+                    districtSelect.appendChild(option);
+                });
+            } else {
+                districtSelect.disabled = true;
+                districtSelect.classList.add('disabled');
+                roadSelect.disabled = true;
+                roadSelect.classList.add('disabled');
+            }
+            updateFullAddress();
+        }
+
+        // 更新道路選項
+        function updateRoads() {
+            roadSelect.innerHTML = '<option value="">請選擇道路</option>';
+            
+            const selectedCity = citySelect.value;
+            const selectedDistrict = districtSelect.value;
+            
+            if (selectedCity && selectedDistrict) {
+                roadSelect.disabled = false;
+                roadSelect.classList.remove('disabled');
+                
+                addressData[selectedCity][selectedDistrict].forEach(road => {
+                    const option = document.createElement('option');
+                    option.value = road;
+                    option.textContent = road;
+                    roadSelect.appendChild(option);
+                });
+            } else {
+                roadSelect.disabled = true;
+                roadSelect.classList.add('disabled');
+            }
+            updateFullAddress();
+        }
+
+        // 更新完整地址
+        function updateFullAddress() {
+            const city = citySelect.value;
+            const district = districtSelect.value;
+            const road = roadSelect.value;
+            const lane = laneInput.value;
+            const long = longInput.value;
+            const alley = alleyInput.value;
+            const hao = haoInput.value;
+            const floor = floorInput.value;
+            const room = roomInput.value;
+
+            if (!city || !district || !road || !hao) {
+                fullAddressDiv.textContent = '請填寫上方資訊以產生完整地址';
+                return;
+            }
+
+            let address = city + district + road;
+            
+            // 按照正確的台灣地址格式組合：巷 → 弄 → 衖 → 號 → 樓 → 室
+            if (lane) address += lane + '巷';
+            if (long) address += long + '弄';
+            if (alley) address += alley + '衖';
+            address += hao + '號';
+            if (floor) address += floor + '樓';
+            if (room) address += room + '室';
+
+            fullAddressDiv.textContent = address;
+        }
+
+        // 事件監聽器
+        citySelect.addEventListener('change', updateDistricts);
+        districtSelect.addEventListener('change', updateRoads);
+        roadSelect.addEventListener('change', updateFullAddress);
+        laneInput.addEventListener('input', updateFullAddress);
+        longInput.addEventListener('input', updateFullAddress);
+        alleyInput.addEventListener('input', updateFullAddress);
+        haoInput.addEventListener('input', updateFullAddress);
+        floorInput.addEventListener('input', updateFullAddress);
+        roomInput.addEventListener('input', updateFullAddress);
+
+        // 初始化
+        initCities();
+    </script>
+</body>
+</html>
