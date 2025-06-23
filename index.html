@@ -290,15 +290,24 @@
   const roomInput = document.getElementById('room');
   const fullAddressDiv = document.getElementById('fullAddress');
 
-  const snapshot = await getDocs(collection(db, "addresses"));
-  snapshot.forEach(doc => {
-    const { city, district, road } = doc.data();
-    if (!addressData[city]) addressData[city] = {};
-    if (!addressData[city][district]) addressData[city][district] = [];
-    if (!addressData[city][district].includes(road)) {
-      addressData[city][district].push(road);
-    }
-  });
+  const snapshot = await getDocs(collection(db, "addressData"));
+
+    snapshot.forEach(doc => {
+      const { city, district, road } = doc.data();
+      if (!city || !district || !road) return;
+
+      if (!addressData[city]) {
+        addressData[city] = {};
+      }
+
+      if (!addressData[city][district]) {
+        addressData[city][district] = [];
+      }
+
+      if (!addressData[city][district].includes(road)) {
+        addressData[city][district].push(road);
+      }
+    });
 
   citySelect.innerHTML = '<option value="">請選擇縣市</option>';
   Object.keys(addressData).forEach(city => {
@@ -388,8 +397,6 @@
   floorInput.addEventListener('input', updateFullAddress);
   roomInput.addEventListener('input', updateFullAddress);
 </script>
-</body>
-</html>
 
 </body>
 </html>
