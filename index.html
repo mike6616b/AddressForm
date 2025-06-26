@@ -59,6 +59,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            position: relative;
         }
         
         .input-with-label input {
@@ -71,6 +72,56 @@
             font-size: 14px;
             white-space: nowrap;
             font-weight: normal;
+        }
+        
+        .number-input {
+            position: relative;
+        }
+        
+        .number-helper {
+            position: absolute;
+            top: -25px;
+            right: 20px;
+            display: flex;
+            gap: 2px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        
+        .number-input:hover .number-helper,
+        .number-input input:focus + .unit-label + .number-helper {
+            opacity: 1;
+        }
+        
+        .helper-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .helper-btn:hover {
+            background: #45a049;
+        }
+        
+        .helper-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* 輸入驗證樣式 */
+        .input-error {
+            border-color: #e74c3c !important;
+            background-color: #fdf2f2;
+        }
+        
+        .input-warning {
+            border-color: #f39c12 !important;
+            background-color: #fef9e7;
         }
         
         select:focus, input:focus {
@@ -216,7 +267,7 @@
         </div>
         
         <div class="form-group">
-            <label for="road">道路或街名 <span class="required">*</span></label>
+            <label for="road">道路或街名或里名稱 <span class="required">*</span></label>
             <select id="road" required disabled class="disabled">
                 <option value="">請先選擇鄉鎮市區</option>
             </select>
@@ -227,29 +278,36 @@
             <label>詳細地址資訊</label>
             <div class="road-group">
                 <div class="input-with-label">
-                    <input type="number" id="lane" placeholder="巷" min="1">
+                    <input type="text" id="lane" placeholder="巷" maxlength="10">
                     <span class="unit-label">巷</span>
                 </div>
                 <div class="input-with-label">
-                    <input type="number" id="long" placeholder="弄" min="1">
+                    <input type="text" id="long" placeholder="弄" maxlength="10">
                     <span class="unit-label">弄</span>
                 </div>
                 <div class="input-with-label">
-                    <input type="number" id="alley" placeholder="衖" min="1">
+                    <input type="text" id="alley" placeholder="衖" maxlength="10">
                     <span class="unit-label">衖</span>
                 </div>
-                <div class="input-with-label">
-                    <input type="number" id="hao" placeholder="號 *" min="1" required>
+                <div class="input-with-label number-input">
+                    <input type="text" id="hao" placeholder="號 *" maxlength="15" required>
                     <span class="unit-label">號</span>
+                    <div class="number-helper">
+                        <button type="button" class="helper-btn" onclick="insertText('hao', '-')">-</button>
+                        <button type="button" class="helper-btn" onclick="insertText('hao', '之')">之</button>
+                    </div>
                 </div>
                 <div class="input-with-label">
-                    <input type="number" id="floor" placeholder="樓" min="1">
+                    <input type="text" id="floor" placeholder="樓" maxlength="10">
                     <span class="unit-label">樓</span>
                 </div>
                 <div class="input-with-label">
-                    <input type="number" id="room" placeholder="室" min="1">
+                    <input type="text" id="room" placeholder="室" maxlength="10">
                     <span class="unit-label">室</span>
                 </div>
+            </div>
+            <div class="help-text">
+                提示：號碼可使用 "7-1" 或 "7之1" 格式，巷弄室可填入中文（如：三巷、甲室）
             </div>
         </div>
         
@@ -318,6 +376,7 @@
   });
   citySelect.disabled = false;
 
+  // 更新完整地址  
   function updateDistricts() {
     districtSelect.innerHTML = '<option value="">請選擇鄉鎮市區</option>';
     roadSelect.innerHTML = '<option value="">請先選擇鄉鎮市區</option>';
@@ -396,6 +455,87 @@
   haoInput.addEventListener('input', updateFullAddress);
   floorInput.addEventListener('input', updateFullAddress);
   roomInput.addEventListener('input', updateFullAddress);
+
+// 輔助函數：插入文字到輸入框
+        function insertText(inputId, text) {
+            const input = document.getElementById(inputId);
+            const cursorPos = input.selectionStart;
+            const currentValue = input.value;
+            
+            // 在游標位置插入文字
+            const newValue = currentValue.substring(0, cursorPos) + text + currentValue.substring(cursorPos);
+            input.value = newValue;
+            
+            // 設置新的游標位置
+            input.focus();
+            input.setSelectionRange(cursorPos + text.length, cursorPos + text.length);
+            
+            // 觸發更新
+            updateFullAddress();
+        }
+    
+    // 輸入驗證函數
+        function validateInput(input, type) {
+            const value = input.value.trim();
+            input.classList.remove('input-error', 'input-warning');
+            
+            if (!value) return true; // 空值允許（除了必填的號碼）
+            
+            switch(type) {
+                case 'hao':
+                    // 號碼格式檢查：允許數字、中文、"-"、"之"
+                    const haoPattern = /^[\d\u4e00-\u9fff\-之]+$/;
+                    if (!haoPattern.test(value)) {
+                        input.classList.add('input-error');
+                        return false;
+                    }
+                    // 警告可能的格式問題
+                    if (value.includes('--') || value.includes('之之')) {
+                        input.classList.add('input-warning');
+                    }
+                    break;
+                    
+                case 'lane':
+                case 'long':
+                case 'alley':
+                case 'floor':
+                case 'room':
+                    // 允許數字和中文
+                    const generalPattern = /^[\d\u4e00-\u9fff]+$/;
+                    if (!generalPattern.test(value)) {
+                        input.classList.add('input-error');
+                        return false;
+                    }
+                    break;
+            }
+            return true;
+        }
+
+        // 為所有輸入框添加驗證
+        function addValidation() {
+            const inputs = [
+                { element: laneInput, type: 'lane' },
+                { element: longInput, type: 'long' },
+                { element: alleyInput, type: 'alley' },
+                { element: haoInput, type: 'hao' },
+                { element: floorInput, type: 'floor' },
+                { element: roomInput, type: 'room' }
+            ];
+            
+            inputs.forEach(({ element, type }) => {
+                element.addEventListener('input', function() {
+                    validateInput(this, type);
+                    updateFullAddress();
+                });
+                
+                element.addEventListener('blur', function() {
+                    validateInput(this, type);
+                });
+            });
+        }
+
+            // 全域函數（供 HTML 按鈕調用）
+        window.insertText = insertText;
 </script>
 
 </body>
