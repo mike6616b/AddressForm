@@ -483,14 +483,14 @@
             
             switch(type) {
                 case 'hao':
-                    // 號碼格式檢查：允許數字、中文、"-"、"之"
-                    const haoPattern = /^[\d\u4e00-\u9fff\-之]+$/;
+                    // 號碼格式檢查：只允許數字、中文數字、"-"、"之"
+                    const haoPattern = /^[\d一二三四五六七八九十百千萬\-之]+$/;
                     if (!haoPattern.test(value)) {
                         input.classList.add('input-error');
                         return false;
                     }
                     // 警告可能的格式問題
-                    if (value.includes('--') || value.includes('之之')) {
+                    if (value.includes('--') || value.includes('之之') || /[之\-]{3,}/.test(value)) {
                         input.classList.add('input-warning');
                     }
                     break;
@@ -500,8 +500,8 @@
                 case 'alley':
                 case 'floor':
                 case 'room':
-                    // 允許數字和中文
-                    const generalPattern = /^[\d\u4e00-\u9fff]+$/;
+                    // 允許數字、中文數字和常用中文字
+                    const generalPattern = /^[\d一二三四五六七八九十百千萬甲乙丙丁戊己庚辛壬癸ABCDEFGHIJKLMNOPQRSTUVWXYZ]+$/i;
                     if (!generalPattern.test(value)) {
                         input.classList.add('input-error');
                         return false;
@@ -534,6 +534,9 @@
             });
         }
 
+// 初始化驗證
+        addValidation();
+    
             // 全域函數（供 HTML 按鈕調用）
         window.insertText = insertText;
 </script>
