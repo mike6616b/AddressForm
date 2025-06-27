@@ -131,7 +131,14 @@
         
         .road-group {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            align-items: center;
+        }
+
+        .road-group-second {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             align-items: center;
         }
@@ -159,7 +166,12 @@
             }
             
             .road-group {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
+
+            .road-group-second {
+                grid-template-columns: repeat(3, 1fr);
                 gap: 6px;
             }
             
@@ -194,14 +206,23 @@
                 grid-template-columns: repeat(3, 1fr);
                 gap: 8px;
             }
+
+            .road-group-second {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
         }
         
         /* 桌面版 */
         @media (min-width: 769px) {
             .road-group {
-                grid-template-columns: repeat(6, 1fr);
+                grid-template-columns: repeat(3, 1fr);
                 gap: 10px;
             }
+          
+            .road-group-second {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
             
             body {
                 padding: 20px;
@@ -289,6 +310,8 @@
                     <input type="text" id="alley" placeholder="衖" maxlength="10">
                     <span class="unit-label">衖</span>
                 </div>
+            </div>
+            <div class="road-group road-group-second">    
                 <div class="input-with-label number-input">
                     <input type="text" id="hao" placeholder="號 *" maxlength="15" required>
                     <span class="unit-label">號</span>
