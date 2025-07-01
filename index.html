@@ -73,6 +73,7 @@
       font-size: 14px;
       white-space: nowrap;
       font-weight: normal;
+      min-width: 20px;
     }
 
     .road-group {
@@ -203,36 +204,37 @@
       </div>
 
       <div class="road-group-second">
-        <div class="input-group-complex">
-          <label class="complex-label">號碼 <span class="required">*</span></label>
-          <div class="horizontal-inputs">
-            <input type="text" id="hao1" placeholder="號碼" maxlength="10" required>
-            <span class="separator">-</span>
-            <input type="text" id="hao2" placeholder="分號" maxlength="10">
-            <span class="unit-label">號</span>
-            <span class="separator">-</span>
-            <input type="text" id="hao3" placeholder="附號" maxlength="10">
-          </div>
-        </div>
+  <div class="input-group-complex">
+    <label class="complex-label">號碼 <span class="required">*</span></label>
+    <div class="horizontal-inputs">
+      <input type="text" id="hao1" placeholder="號碼" maxlength="10" required>
+      <span class="separator">-</span>
+      <input type="text" id="hao2" placeholder="分號" maxlength="10">
+      <span class="unit-label">號</span>
+      <span class="separator">-</span>
+      <input type="text" id="hao3" placeholder="附號" maxlength="10">
+      <span class="unit-label">附</span>
+    </div>
+  </div>
 
-        <div class="input-group-complex">
-          <label class="complex-label">樓層</label>
-          <div class="horizontal-inputs">
-            <input type="text" id="floor1" placeholder="樓層" maxlength="10">
-            <span class="unit-label">樓</span>
-            <span class="separator">-</span>
-            <input type="text" id="floor2" placeholder="分樓" maxlength="10">
-          </div>
-        </div>
+  <div class="input-group-complex">
+    <label class="complex-label">樓層</label>
+    <div class="horizontal-inputs">
+      <input type="text" id="floor1" placeholder="樓層" maxlength="10">
+      <span class="unit-label">樓</span>
+      <span class="separator">-</span>
+      <input type="text" id="floor2" placeholder="分樓" maxlength="10">
+    </div>
+  </div>
 
-        <div class="input-group-complex">
-          <label class="complex-label">室</label>
-          <div class="horizontal-inputs">
-            <input type="text" id="room" placeholder="室" maxlength="10">
-            <span class="unit-label">室</span>
-          </div>
-        </div>
-      </div>
+  <div class="input-group-complex">
+    <label class="complex-label" style="visibility: hidden;">室</label>
+    <div class="horizontal-inputs">
+      <input type="text" id="room" placeholder="室" maxlength="10">
+      <span class="unit-label">室</span>
+    </div>
+  </div>
+</div>
 
       <div class="help-text">
         提示：號碼直接填入數字即可，系統會自動組合（如：12, 3 → 12-3號），可填入中文數字和英文字母
