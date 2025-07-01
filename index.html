@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>地址填寫表單</title>
+    <title>台灣地址填寫表單</title>
     <style>
         body {
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
@@ -74,14 +74,43 @@
             font-weight: normal;
         }
         
-        .number-input {
+        .input-group-complex {
             position: relative;
+        }
+        
+        .complex-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .complex-input {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-wrap: wrap;
+        }
+        
+        .complex-input input {
+            flex: 1;
+            min-width: 40px;
+            padding: 8px 4px;
+            font-size: 14px;
+        }
+        
+        .separator {
+            color: #999;
+            font-weight: bold;
+            padding: 0 2px;
+            font-size: 14px;
         }
         
         .number-helper {
             position: absolute;
-            top: -25px;
-            right: 20px;
+            top: -20px;
+            right: 0px;
             display: flex;
             gap: 2px;
             opacity: 0;
@@ -89,8 +118,7 @@
             z-index: 10;
         }
         
-        .number-input:hover .number-helper,
-        .number-input input:focus + .unit-label + .number-helper {
+        .input-group-complex:hover .number-helper {
             opacity: 1;
         }
         
@@ -131,14 +159,7 @@
         
         .road-group {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            align-items: center;
-        }
-
-        .road-group-second {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 8px;
             align-items: center;
         }
@@ -166,13 +187,13 @@
             }
             
             .road-group {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 6px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
             }
-
+            
             .road-group-second {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 6px;
+                grid-template-columns: 1fr;
+                gap: 12px;
             }
             
             select, input {
@@ -182,6 +203,11 @@
             
             .input-with-label input {
                 padding: 12px 6px;
+            }
+            
+            .complex-input input {
+                padding: 10px 4px;
+                font-size: 14px;
             }
             
             .unit-label {
@@ -204,12 +230,7 @@
         @media (min-width: 481px) and (max-width: 768px) {
             .road-group {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-            }
-
-            .road-group-second {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
+                gap: 10px;
             }
         }
         
@@ -217,12 +238,8 @@
         @media (min-width: 769px) {
             .road-group {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
+                gap: 15px;
             }
-          
-            .road-group-second {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
             
             body {
                 padding: 20px;
@@ -311,18 +328,26 @@
                     <span class="unit-label">衖</span>
                 </div>
             </div>
-            <div class="road-group road-group-second">    
-                <div class="input-with-label number-input">
-                    <input type="text" id="hao" placeholder="號 *" maxlength="15" required>
-                    <span class="unit-label">號</span>
-                    <div class="number-helper">
-                        <button type="button" class="helper-btn" onclick="insertText('hao', '-')">-</button>
-                        <button type="button" class="helper-btn" onclick="insertText('hao', '之')">之</button>
+            <div class="road-group road-group-second">
+                <div class="input-group-complex">
+                    <label class="complex-label">號碼 <span class="required">*</span></label>
+                    <div class="complex-input">
+                        <input type="text" id="hao1" placeholder="號碼" maxlength="10" required>
+                        <span class="separator">-</span>
+                        <input type="text" id="hao2" placeholder="分號" maxlength="10">
+                        <span class="unit-label">號</span>
+                        <span class="separator">-</span>
+                        <input type="text" id="hao3" placeholder="附號" maxlength="10">
                     </div>
                 </div>
-                <div class="input-with-label">
-                    <input type="text" id="floor" placeholder="樓" maxlength="10">
-                    <span class="unit-label">樓</span>
+                <div class="input-group-complex">
+                    <label class="complex-label">樓層</label>
+                    <div class="complex-input">
+                        <input type="text" id="floor1" placeholder="樓層" maxlength="10">
+                        <span class="unit-label">樓</span>
+                        <span class="separator">-</span>
+                        <input type="text" id="floor2" placeholder="分樓" maxlength="10">
+                    </div>
                 </div>
                 <div class="input-with-label">
                     <input type="text" id="room" placeholder="室" maxlength="10">
@@ -330,7 +355,7 @@
                 </div>
             </div>
             <div class="help-text">
-                提示：號碼可使用 "7-1" 或 "7之1" 格式，巷弄室可填入中文（如：三巷、甲室）
+                提示：號碼直接填入數字即可，系統會自動組合（如：12, 3 → 12-3號），可填入中文數字和英文字母
             </div>
         </div>
         
@@ -341,7 +366,7 @@
             </div>
         </div>
     </div>
-
+    
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
