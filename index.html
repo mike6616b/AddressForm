@@ -65,6 +65,12 @@
         .input-with-label input {
             flex: 1;
             min-width: 0;
+            padding: 10px 6px;
+        }
+        
+        /* 調整一般輸入框的寬度 */
+        .road-group .input-with-label input {
+            max-width: 80px;
         }
         
         .unit-label {
@@ -94,10 +100,19 @@
         }
         
         .complex-input input {
-            flex: 1;
-            min-width: 40px;
             padding: 8px 4px;
             font-size: 14px;
+        }
+        
+        .complex-input input:first-child {
+            flex: 2;
+            min-width: 60px;
+        }
+        
+        .complex-input input:not(:first-child) {
+            flex: 1;
+            min-width: 35px;
+            max-width: 50px;
         }
         
         .separator {
@@ -192,22 +207,47 @@
             }
             
             .road-group-second {
-                grid-template-columns: 1fr;
-                gap: 12px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .input-with-label input {
+                width: 60px;
+                padding: 10px 6px;
+                font-size: 16px;
+            }
+            
+            .number-inputs input,
+            .floor-inputs input,
+            .room-group input {
+                padding: 10px 6px;
+                font-size: 16px;
+            }
+            
+            .number-inputs input:first-child {
+                width: 70px;
+            }
+            
+            .number-inputs input:not(:first-child) {
+                width: 50px;
+            }
+            
+            .floor-inputs input:first-child {
+                width: 60px;
+            }
+            
+            .floor-inputs input:not(:first-child) {
+                width: 50px;
+            }
+            
+            .room-group input {
+                width: 60px;
             }
             
             select, input {
                 padding: 12px 8px;
                 font-size: 16px;
-            }
-            
-            .input-with-label input {
-                padding: 12px 6px;
-            }
-            
-            .complex-input input {
-                padding: 10px 4px;
-                font-size: 14px;
             }
             
             .unit-label {
@@ -232,13 +272,21 @@
                 grid-template-columns: repeat(3, 1fr);
                 gap: 10px;
             }
+            
+            .road-group-second {
+                gap: 6px;
+            }
         }
         
         /* 桌面版 */
         @media (min-width: 769px) {
             .road-group {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 15px;
+                gap: 12px;
+            }
+            
+            .road-group-second {
+                gap: 10px;
             }
             
             body {
@@ -328,34 +376,34 @@
                     <span class="unit-label">衖</span>
                 </div>
             </div>
-            <div class="road-group road-group-second">
-                <div class="input-group-complex">
-                    <label class="complex-label">號碼 <span class="required">*</span></label>
-                    <div class="complex-input">
+            <div class="road-group-second">
+                <div class="number-group">
+                    <label class="number-label">門牌號 <span class="required">*</span></label>
+                    <div class="number-inputs">
                         <input type="text" id="hao1" placeholder="號碼" maxlength="10" required>
-                        <span class="separator">-</span>
-                        <input type="text" id="hao2" placeholder="分號" maxlength="10">
+                        <span class="dash">-</span>
+                        <input type="text" id="hao2" placeholder="分號" maxlength="5">
                         <span class="unit-label">號</span>
-                        <span class="separator">-</span>
-                        <input type="text" id="hao3" placeholder="附號" maxlength="10">
+                        <span class="dash">-</span>
+                        <input type="text" id="hao3" placeholder="附號" maxlength="5">
                     </div>
                 </div>
-                <div class="input-group-complex">
-                    <label class="complex-label">樓層</label>
-                    <div class="complex-input">
+                <div class="floor-group">
+                    <label class="floor-label">樓層</label>
+                    <div class="floor-inputs">
                         <input type="text" id="floor1" placeholder="樓層" maxlength="10">
                         <span class="unit-label">樓</span>
-                        <span class="separator">-</span>
-                        <input type="text" id="floor2" placeholder="分樓" maxlength="10">
+                        <span class="dash">-</span>
+                        <input type="text" id="floor2" placeholder="分樓" maxlength="5">
                     </div>
                 </div>
-                <div class="input-with-label">
+                <div class="room-group">
                     <input type="text" id="room" placeholder="室" maxlength="10">
                     <span class="unit-label">室</span>
                 </div>
             </div>
             <div class="help-text">
-                提示：號碼直接填入數字即可，系統會自動組合（如：12, 3 → 12-3號），可填入中文數字和英文字母
+                提示：門牌號直接填入數字即可，系統會自動組合（如：12, 3 → 12-3號），可填入中文數字和英文字母
             </div>
         </div>
         
@@ -366,7 +414,7 @@
             </div>
         </div>
     </div>
-
+    
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
