@@ -386,15 +386,18 @@
   let addressData = {};
 
   const citySelect = document.getElementById('city');
-  const districtSelect = document.getElementById('district');
-  const roadSelect = document.getElementById('road');
-  const laneInput = document.getElementById('lane');
-  const longInput = document.getElementById('long');
-  const alleyInput = document.getElementById('alley');
-  const haoInput = document.getElementById('hao');
-  const floorInput = document.getElementById('floor');
-  const roomInput = document.getElementById('room');
-  const fullAddressDiv = document.getElementById('fullAddress');
+    const districtSelect = document.getElementById('district');
+        const roadSelect = document.getElementById('road');
+        const laneInput = document.getElementById('lane');
+        const longInput = document.getElementById('long');
+        const alleyInput = document.getElementById('alley');
+        const hao1Input = document.getElementById('hao1');
+        const hao2Input = document.getElementById('hao2');
+        const hao3Input = document.getElementById('hao3');
+        const floor1Input = document.getElementById('floor1');
+        const floor2Input = document.getElementById('floor2');
+        const roomInput = document.getElementById('room');
+        const fullAddressDiv = document.getElementById('fullAddress');
 
   const snapshot = await getDocs(collection(db, "addressData"));
 
@@ -468,31 +471,48 @@
   }
 
   function updateFullAddress() {
-    const city = citySelect.value;
-    const district = districtSelect.value;
-    const road = roadSelect.value;
-    const lane = laneInput.value;
-    const long = longInput.value;
-    const alley = alleyInput.value;
-    const hao = haoInput.value;
-    const floor = floorInput.value;
-    const room = roomInput.value;
+            const city = citySelect.value;
+            const district = districtSelect.value;
+            const road = roadSelect.value;
+            const lane = laneInput.value;
+            const long = longInput.value;
+            const alley = alleyInput.value;
+            const hao1 = hao1Input.value;
+            const hao2 = hao2Input.value;
+            const hao3 = hao3Input.value;
+            const floor1 = floor1Input.value;
+            const floor2 = floor2Input.value;
+            const room = roomInput.value;
 
-    if (!city || !district || !road || !hao) {
-      fullAddressDiv.textContent = '請填寫上方資訊以產生完整地址';
-      return;
-    }
+    if (!city || !district || !road || !hao1) {
+                fullAddressDiv.textContent = '請填寫上方資訊以產生完整地址';
+                return;
+            }
 
-    let address = city + district + road;
-    if (lane) address += lane + '巷';
-    if (long) address += long + '弄';
-    if (alley) address += alley + '衖';
-    address += hao + '號';
-    if (floor) address += floor + '樓';
-    if (room) address += room + '室';
+            let address = city + district + road;
+            
+            // 巷弄衖
+            if (lane) address += lane + '巷';
+            if (long) address += long + '弄';
+            if (alley) address += alley + '衖';
+            
+            // 號碼組合：避免出現 "12-號" 或 "12號-3樓" 的情況
+            address += hao1;
+            if (hao2) address += '-' + hao2;
+            address += '號';
+            if (hao3) address += '-' + hao3;
+            
+            // 樓層組合：避免出現 "5樓-" 的情況
+            if (floor1) {
+                address += floor1 + '樓';
+                if (floor2) address += '-' + floor2;
+            }
+            
+            // 室
+            if (room) address += room + '室';
 
-    fullAddressDiv.textContent = address;
-  }
+            fullAddressDiv.textContent = address;
+        }
 
   citySelect.addEventListener('change', updateDistricts);
   districtSelect.addEventListener('change', updateRoads);
@@ -531,15 +551,11 @@
             
             switch(type) {
                 case 'hao':
-                    // 號碼格式檢查：只允許數字、中文數字、"-"、"之"
-                    const haoPattern = /^[\d一二三四五六七八九十百千萬\-之]+$/;
+                    // 號碼格式檢查：只允許數字和中文數字（不再需要"-"和"之"）
+                    const haoPattern = /^[\d一二三四五六七八九十百千萬ABCDEFGHIJKLMNOPQRSTUVWXYZ]+$/i;
                     if (!haoPattern.test(value)) {
                         input.classList.add('input-error');
                         return false;
-                    }
-                    // 警告可能的格式問題
-                    if (value.includes('--') || value.includes('之之') || /[之\-]{3,}/.test(value)) {
-                        input.classList.add('input-warning');
                     }
                     break;
                     
@@ -565,8 +581,11 @@
                 { element: laneInput, type: 'lane' },
                 { element: longInput, type: 'long' },
                 { element: alleyInput, type: 'alley' },
-                { element: haoInput, type: 'hao' },
-                { element: floorInput, type: 'floor' },
+                { element: hao1Input, type: 'hao' },
+                { element: hao2Input, type: 'hao' },
+                { element: hao3Input, type: 'hao' },
+                { element: floor1Input, type: 'floor' },
+                { element: floor2Input, type: 'floor' },
                 { element: roomInput, type: 'room' }
             ];
             
