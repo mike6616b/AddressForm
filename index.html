@@ -1,255 +1,385 @@
-<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>地址填寫表單</title>
-  <style>
-    body {
-      font-family: 'Microsoft JhengHei', Arial, sans-serif;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 15px;
-      background-color: #f5f5f5;
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
-
-    .form-container {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .required {
-      color: #e74c3c;
-    }
-
-    select, input {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-
-    input::placeholder {
-      color: #bbb;
-    }
-
-    .input-with-label {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .input-with-label input {
-      flex: 1;
-      min-width: 0;
-      padding: 10px 6px;
-    }
-
-    .road-group .input-with-label input {
-      max-width: 80px;
-    }
-
-    .unit-label {
-      color: #666;
-      font-size: 14px;
-      white-space: nowrap;
-      font-weight: normal;
-      min-width: 20px;
-    }
-
-    .road-group {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      align-items: center;
-    }
-
-    .road-group-second {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-      align-items: flex-end;
-    }
-
-    .input-group-complex {
-      flex: 1;
-      min-width: 150px;
-    }
-
-    .complex-label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #333;
-      font-size: 14px;
-    }
-
-    .horizontal-inputs {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-wrap: nowrap;
-    }
-
-    .horizontal-inputs input {
-      width: 60px;
-      padding: 10px 6px;
-      font-size: 14px;
-      border: 2px solid #ddd;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
-
-    .separator {
-      color: #999;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .address-display {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #e8f5e8;
-      border: 2px solid #4CAF50;
-      border-radius: 5px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #2c5530;
-      min-height: 24px;
-    }
-
-    .help-text {
-      font-size: 14px;
-      color: #666;
-      margin-top: 5px;
-    }
-
-    @media (max-width: 480px) {
-      .road-group {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-      }
-
-      .road-group-second {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .horizontal-inputs input {
-        width: 100%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地址填寫表單</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        
+        input::placeholder {
+            color: #bbb;
+        }
+        
+        .input-with-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+        }
+        
+        .input-with-label input {
+            flex: 1;
+            min-width: 0;
+            padding: 10px 6px;
+        }
+        
+        /* 調整一般輸入框的寬度 */
+        .road-group .input-with-label input {
+            max-width: 80px;
+        }
+        
+        .unit-label {
+            color: #666;
+            font-size: 14px;
+            white-space: nowrap;
+            font-weight: normal;
+        }
+        
+        .input-group-complex {
+            position: relative;
+        }
+        
+        .complex-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .complex-input {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-wrap: wrap;
+        }
+        
+        .complex-input input {
+            padding: 12px 4px;
+            font-size: 14px;
+        }
+        
+        .complex-input input:first-child {
+            flex: 2;
+            min-width: 60px;
+        }
+        
+        .complex-input input:not(:first-child) {
+            flex: 1;
+            min-width: 25px;
+            max-width: 35px;
+        }
+        
+        .separator {
+            color: #999;
+            font-weight: bold;
+            padding: 0 2px;
+            font-size: 14px;
+        }
+        
+        .number-helper {
+            position: absolute;
+            top: -20px;
+            right: 0px;
+            display: flex;
+            gap: 2px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+        
+        .input-group-complex:hover .number-helper {
+            opacity: 1;
+        }
+        
+        .helper-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .helper-btn:hover {
+            background: #45a049;
+        }
+        
+        .helper-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* 輸入驗證樣式 */
+        .input-error {
+            border-color: #e74c3c !important;
+            background-color: #fdf2f2;
+        }
+        
+        .input-warning {
+            border-color: #f39c12 !important;
+            background-color: #fef9e7;
+        }
+        
+        select:focus, input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        
+        .road-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            align-items: center;
+        }
+        
+        /* 手機版調整 */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                margin: 0;
+            }
+            
+            .form-container {
+                padding: 15px;
+                border-radius: 5px;
+                margin: 0;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .road-group {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .road-group-second {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            select, input {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+            
+            .input-with-label input {
+                padding: 12px 6px;
+            }
+            
+            .complex-input input {
+                padding: 10px 4px;
+                font-size: 14px;
+            }
+            
+            .unit-label {
+                font-size: 13px;
+            }
+            
+            .help-text {
+                font-size: 13px;
+                margin-top: 3px;
+            }
+            
+            .address-display {
+                font-size: 16px;
+                padding: 12px;
+                line-height: 1.4;
+            }
+        }
+        
+        /* 平板版調整 */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .road-group {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+        }
+        
+        /* 桌面版 */
+        @media (min-width: 769px) {
+            .road-group {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+            
+            body {
+                padding: 20px;
+                margin: 50px auto;
+            }
+            
+            .form-container {
+                padding: 30px;
+            }
+        }
+        
+        .road-group input {
+            width: 100%;
+        }
+        
+        .address-display {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e8;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c5530;
+            min-height: 24px;
+        }
+        
+        .disabled {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        
+        .help-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
-  <div class="form-container">
-    <h1>地址填寫表單</h1>
-
-    <div class="form-group">
-      <label for="city">請選擇縣市 <span class="required">*</span></label>
-      <select id="city" required>
-        <option value="">請選擇縣市</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="district">請選擇鄉鎮市區 <span class="required">*</span></label>
-      <select id="district" required disabled class="disabled">
-        <option value="">請先選擇縣市</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="road">道路或街名或里名稱 <span class="required">*</span></label>
-      <select id="road" required disabled class="disabled">
-        <option value="">請先選擇鄉鎮市區</option>
-      </select>
-      <div class="help-text">使用說明：根據所選縣市及行政區顯示可選道路</div>
-    </div>
-
-    <div class="form-group">
-      <label>詳細地址資訊</label>
-      <div class="road-group">
-        <div class="input-with-label">
-          <input type="text" id="lane" placeholder="巷" maxlength="10">
-          <span class="unit-label">巷</span>
+    <div class="form-container">
+        <h1>地址填寫表單</h1>
+        
+        <div class="form-group">
+            <label for="city">請選擇縣市 <span class="required">*</span></label>
+            <select id="city" required>
+                <option value="">請選擇縣市</option>
+            </select>
         </div>
-        <div class="input-with-label">
-          <input type="text" id="long" placeholder="弄" maxlength="10">
-          <span class="unit-label">弄</span>
+        
+        <div class="form-group">
+            <label for="district">請選擇鄉鎮市區 <span class="required">*</span></label>
+            <select id="district" required disabled class="disabled">
+                <option value="">請先選擇縣市</option>
+            </select>
         </div>
-        <div class="input-with-label">
-          <input type="text" id="alley" placeholder="衖" maxlength="10">
-          <span class="unit-label">衖</span>
+        
+        <div class="form-group">
+            <label for="road">道路或街名或里名稱 <span class="required">*</span></label>
+            <select id="road" required disabled class="disabled">
+                <option value="">請先選擇鄉鎮市區</option>
+            </select>
+            <div class="help-text">使用說明：根據所選縣市及行政區顯示可選道路</div>
         </div>
-      </div>
-
-      <div class="road-group-second">
-  <div class="input-group-complex">
-    <label class="complex-label">號碼 <span class="required">*</span></label>
-    <div class="horizontal-inputs">
-      <input type="text" id="hao1" placeholder="號碼" maxlength="10" required>
-      <span class="separator">-</span>
-      <input type="text" id="hao2" placeholder="分號" maxlength="10">
-      <span class="unit-label">號</span>
-      <span class="separator">-</span>
-      <input type="text" id="hao3" placeholder="附號" maxlength="10">
-      <span class="unit-label">附</span>
+        
+        <div class="form-group">
+            <label>詳細地址資訊</label>
+            <div class="road-group">
+                <div class="input-with-label">
+                    <input type="text" id="lane" placeholder="巷" maxlength="10">
+                    <span class="unit-label">巷</span>
+                </div>
+                <div class="input-with-label">
+                    <input type="text" id="long" placeholder="弄" maxlength="10">
+                    <span class="unit-label">弄</span>
+                </div>
+                <div class="input-with-label">
+                    <input type="text" id="alley" placeholder="衖" maxlength="10">
+                    <span class="unit-label">衖</span>
+                </div>
+            </div>
+            <div class="road-group road-group-second">
+                <div class="input-group-complex">
+                    <label class="complex-label">號碼 <span class="required">*</span></label>
+                    <div class="complex-input">
+                        <input type="text" id="hao1" placeholder="號碼" maxlength="10" required>
+                        <span class="separator">-</span>
+                        <input type="text" id="hao2" placeholder="分號" maxlength="10">
+                        <span class="unit-label">號</span>
+                        <span class="separator">-</span>
+                        <input type="text" id="hao3" placeholder="附號" maxlength="10">
+                    </div>
+                </div>
+                <div class="input-group-complex">
+                    <label class="complex-label">樓層</label>
+                    <div class="complex-input">
+                        <input type="text" id="floor1" placeholder="樓層" maxlength="10">
+                        <span class="unit-label">樓</span>
+                        <span class="separator">-</span>
+                        <input type="text" id="floor2" placeholder="分樓" maxlength="10">
+                    </div>
+                </div>
+                <div class="input-with-label">
+                    <input type="text" id="room" placeholder="室" maxlength="10">
+                    <span class="unit-label">室</span>
+                </div>
+            </div>
+            <div class="help-text">
+                提示：號碼直接填入數字即可
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>完整地址</label>
+            <div class="address-display" id="fullAddress">
+                請填寫上方資訊以產生完整地址
+            </div>
+        </div>
     </div>
-  </div>
-
-  <div class="input-group-complex">
-    <label class="complex-label">樓層</label>
-    <div class="horizontal-inputs">
-      <input type="text" id="floor1" placeholder="樓層" maxlength="10">
-      <span class="unit-label">樓</span>
-      <span class="separator">-</span>
-      <input type="text" id="floor2" placeholder="分樓" maxlength="10">
-    </div>
-  </div>
-
-  <div class="input-group-complex">
-    <label class="complex-label" style="visibility: hidden;">室</label>
-    <div class="horizontal-inputs">
-      <input type="text" id="room" placeholder="室" maxlength="10">
-      <span class="unit-label">室</span>
-    </div>
-  </div>
-</div>
-
-      <div class="help-text">
-        提示：號碼直接填入數字即可，系統會自動組合（如：12, 3 → 12-3號），可填入中文數字和英文字母
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>完整地址</label>
-      <div class="address-display" id="fullAddress">
-        請填寫上方資訊以產生完整地址
-      </div>
-    </div>
-  </div>
-</body>
-</html>
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
